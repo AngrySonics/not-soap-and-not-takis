@@ -1,0 +1,235 @@
+rawset(_G, "notsoapaiinit", function(p)
+	p.notsoapaiinit = 1
+	p.notsoapaispecialskin = 0
+	p.notsoapaielevated = 0
+	p.notsoapaiframing = 0
+//	p.notsoapaistyle = 1,
+//	p.notsoapaispeed = 0,
+	//we dont actually set these, but its easier to keep track of vars
+/*	p.ptcprtaicolor1
+	p.notsoapaicolor2
+	p.isptaichar
+	
+*/	CONS_Printf(p, "Pizza Tower Variables set.")
+	CONS_Printf(p, "\x82"+"Check out"+"\x86"+" notsoapai_help"+"\x82 "+"for options!")
+
+	return true
+end)
+
+COM_AddCommand("notsoapai_help", function(p)
+	if not p or not p.notsoapaiinit or not p.valid
+        CONS_Printf(p, "\x85"+"You aren't valid or the Pizza Tower Variables aren't!")
+        return
+	end
+	
+	CONS_Printf(p, "PT Afterframes has 4 commands available for you to tinker around with, which are saved automatically!")
+	CONS_Printf(p, "\x86notsoapai_style -\x82 Sets the style of the afterimages.")
+	CONS_Printf(p, "\x86notsoapai_color1 -\x82 Sets the color of the first afterimage. Can only be viewed if your style is set to 3.")
+	CONS_Printf(p, "\x86notsoapai_color2 -\x82 Sets the color of the second afterimage. Can only be viewed if your style is set to 3.")
+	
+end)
+
+COM_AddCommand("notsoapai_style", function(p, arg)
+	if not p or not p.valid
+        CONS_Printf(p, "\x85"+"You don't exist yet!")
+        return
+	end
+	
+	local prevstyle
+	local argV
+	
+	if arg
+		argV = tonumber(arg)
+		prevstyle = p.notsoapaistyle
+		p.notsoapaistyle = argV
+		if not argV
+		or argV > 3
+		or argV < 1
+			p.notsoapaistyle = prevstyle
+			CONS_Printf(p, "\x85"+"Value is too low! Choose between 1 or 3.")
+			return
+		end
+		if io and p == consoleplayer
+			local file = io.openlocal("client/notsoapandtakis/style.dat", "w+")
+			file:write(argV)
+			file:close()
+		end
+
+		CONS_Printf(p, "Style set to "+"\x82"+arg+"\x80"+".")
+	else
+		CONS_Printf(p, "Changes the colors of the Pizza Tower Afterimages.")
+		CONS_Printf(p, "This has 3 styles available:")
+		CONS_Printf(p, "1: Pizza Tower") 
+		CONS_Printf(p, "2: Sugary Spire")
+		CONS_Printf(p, "3: Custom")
+		CONS_Printf(p, "Current style is \x82" + p.notsoapaistyle+"\x80"+".") 
+	end
+end)
+
+COM_AddCommand("notsoapai_active", function(p, arg)
+	if not p  or not p.valid
+        CONS_Printf(p, "\x85"+"You don't exist yet!")
+        return
+	end
+	
+	local prevstyle
+	local argV
+	
+	if arg
+		argV = tonumber(arg)
+		prevstyle = p.notsoapaispeed
+		p.notsoapaispeed = argV
+		if (arg == nil)
+		or argV > 1
+		or argV < 0
+			p.notsoapaispeed = prevstyle
+			CONS_Printf(p, "\x85"+"Value is too high or too low! Choose either 0 or 1.")
+			return
+		end
+		if io and p == consoleplayer
+			local file = io.openlocal("client/pizzatowercharacterpackremakeai/activation.dat", "w+")
+			file:write(argV)
+			file:close()
+		end
+
+		CONS_Printf(p, "Style set to "+"\x82"+argV+"\x80"+".")
+	else
+		CONS_Printf(p, "Sets what makes afterimages.")
+		CONS_Printf(p, "This has 2 styles available:")
+		CONS_Printf(p, "0: Default (Shoes and Dashmode only)") 
+		CONS_Printf(p, "1: Speed (Shoes, Dashmode and speed)")
+		CONS_Printf(p, "Current style is \x82" + p.notsoapaispeed+"\x80"+".") 
+	end
+end)
+
+COM_AddCommand("notsoapai_color1", function(p, arg, s)
+	if not p or not p.valid
+        CONS_Printf(p, "\x85"+"You don't exist yet!")
+        return
+	end
+	
+	local prevstyle
+	local c
+	
+	if p.notsoapaistyle ~= 3
+	and not s
+		CONS_Printf(p, "\x8D"+"These can only be viewed if you have your style set to "+"\x82"+"Custom"+"\x8D"+".\n")
+	end
+	
+	if arg and R_GetColorByName(arg) != SKINCOLOR_NONE
+		c = R_GetColorByName(arg)
+		prevstyle = p.notsoapaicolor1
+		p.notsoapaicolor1 = c
+		if (arg == nil)
+			p.notsoapaicolor1 = prevstyle
+			if not s
+				CONS_Printf(p, "\x85"+"You have to set a color for this to work.")
+			end
+			return
+		end
+		if io and p == consoleplayer
+			local file = io.openlocal("client/pizzatowercharacterpackremakeai/color1.dat", "w+")
+			file:write(c)
+			file:close()
+		end
+
+		if not s
+			CONS_Printf(p, "First Color set to "+"\x82"+arg+"\x80"+".")
+		end
+	else
+		CONS_Printf(p, "Sets what color the first afterimage is.")
+		CONS_Printf(p, "Please note that custom colors may not save!\n")
+		CONS_Printf(p, "Current color is \x82" + p.notsoapaicolor1+"\x80"+".") 
+	end
+end)
+
+COM_AddCommand("notsoapai_color2", function(p, arg, s)
+	if not p or not p.valid
+        CONS_Printf(p, "\x85"+"You don't exist yet!")
+        return
+	end
+	
+	local prevstyle
+	local c
+	
+	if p.notsoapaistyle ~= 3
+	and not s
+		CONS_Printf(p, "\x8D"+"These can only be viewed if you have your style set to "+"\x82"+"Custom"+"\x8D"+".\n")
+	end
+	
+	if arg and R_GetColorByName(arg) != SKINCOLOR_NONE
+		c = R_GetColorByName(arg)
+		prevstyle = p.notsoapaicolor2
+		p.notsoapaicolor2 = c
+		if (arg == nil)
+			p.notsoapaicolor2 = prevstyle
+			if not s
+				CONS_Printf(p, "\x85"+"You have to set a color for this to work.")
+			end
+			return
+		end
+		if io and p == consoleplayer
+			local file = io.openlocal("client/pizzatowercharacterpackremakeai/color2.dat", "w+")
+			file:write(c)
+			file:close()
+		end
+
+		if not s
+			CONS_Printf(p, "Second Color set to "+"\x82"+arg+"\x80"+".")
+		end
+	else
+		CONS_Printf(p, "Sets what color the second afterimage is.")
+		CONS_Printf(p, "Please note that custom colors may not save!\n")
+		CONS_Printf(p, "Current color is \x82" + p.notsoapaicolor2+"\x80"+".") 
+	end
+end)
+
+freeslot("SKINCOLOR_AIREALLYBLUE")
+freeslot("SKINCOLOR_AIREALLYPINK")
+
+freeslot("SKINCOLOR_AIREALLYRED")
+freeslot("SKINCOLOR_AIREALLYGREEN")
+skincolors[SKINCOLOR_AIREALLYRED] = {
+	name = "Afterimages Red",
+	ramp = {35,35,35,35,35,35,35,35,35,35,35,41,41,41,41,41},
+	invcolor = SKINCOLOR_AIREALLYGREEN,
+	invshade = 0,
+	chatcolor = V_REDMAP,
+	accessible = true
+}
+//freeslot("SKINCOLOR_SOAPAIREALLYGREEN")
+
+skincolors[SKINCOLOR_AIREALLYGREEN] = {
+	name = "Afterimages Green",
+	ramp = {100,100,100,100,100,100,100,100,100,100,100,191,191,191,191,191},
+	invcolor = SKINCOLOR_AIREALLYRED,
+	invshade = 0,
+	chatcolor = V_GREENMAP,
+	accessible = true
+}
+
+skincolors[SKINCOLOR_AIREALLYBLUE] = {
+    name = "Really Blue",
+    ramp = {136,136,136,136,136,136,136,136,136,136,136,138,138,138,138,138},
+    invcolor = SKINCOLOR_AIREALLYPINK,
+    invshade = 0,
+    chatcolor = V_SKYMAP,
+    accessible = true
+}
+
+skincolors[SKINCOLOR_AIREALLYPINK] = {
+    name = "Really Pink",
+    ramp = {204,204,204,204,204,204,204,204,204,204,204,71,71,71,71,71},
+    invcolor = SKINCOLOR_AIREALLYBLUE,
+    invshade = 0,
+    chatcolor = V_ROSYMAP,
+    accessible = true
+}
+
+freeslot("MT_NOTSOAPAI_AFTERIMAGE_OBJECT")
+mobjinfo[MT_NOTSOAPAI_AFTERIMAGE_OBJECT] = {
+	doomednum = -1,
+	spawnstate = S_PLAY_WAIT,
+	flags = MF_NOCLIP|MF_NOCLIPHEIGHT|MF_NOGRAVITY|MF_NOBLOCKMAP
+}
+

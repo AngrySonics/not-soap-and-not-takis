@@ -1,0 +1,28 @@
+//candidate system
+
+if not NSATAICandidates
+	rawset(_G, "NSATAICandidates", {})
+end
+
+/*
+	Add candidate for Afterimages.
+	Stuff to put:
+	-isspecial : Sets PTAI Specical char for that skin. Best for characters with custom dashmodes
+	-cmdcustom : Allows the player's custom colors
+	-skincustom : Replaces vanilla styles & colors to use the ones youve set
+	-sc1 : (if skincustom) First afterimages's color. For use with skincustom. 
+	-sc2 : (if skincustom) Second afterimages's color. For use with skincustom. 
+
+	NSATAICandidates["exampleskin"] = {false, true, false}
+
+*/
+rawset(_G, "InitnotsoapaiChars", function()
+NSATAICandidates["notsoap"] = {false, true, false}
+NSATAICandidates["nottakis"] = {true, true, false}
+NSATAICandidates["shampoo"] = {false, true, false}
+end)
+InitnotsoapaiChars()
+//i really shouldnt have to do this
+addHook("NetVars", function(net)
+	NSATAICandidates = net(NSATAICandidates)
+end)

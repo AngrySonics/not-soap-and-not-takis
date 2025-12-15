@@ -1,0 +1,16 @@
+Cutscene 2
+NumScenes 1
+#
+Scene 1
+NumberOfPics = 1
+Pic1Name = TUTORI
+Pic1Hires = false
+Pic1Duration = 10000
+Pic1XCoord = 0
+Pic1YCoord = 0
+TextXPos = 1
+TextYPos = 320
+Music = TUTORI
+MusicLoop = false
+SceneText =
+      #

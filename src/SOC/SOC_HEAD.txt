@@ -1,0 +1,16 @@
+Maincfg Category
+TitleMap = 0
+TitleScrollSpeed = -50
+CustomVersion = (not) FINAL DEMO
+LoopTitle = True
+
+Level Z0
+Levelname = Tutorial
+Act = 0
+Music = TUTORL
+NextLevel = Z1
+TypeOfLevel = Singleplayer
+HideInStats = true
+SkyNum = 99
+ForceCharacter = notsoap
+PreCutsceneNum = 2

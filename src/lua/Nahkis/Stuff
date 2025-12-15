@@ -1,0 +1,227 @@
+freeslot("sfx_nsilly","sfx_ntspd","sfx_boomr","sfx_ntimp1","sfx_ntimp2")
+
+addHook('PlayerSpawn', function(player)
+	if (player.holdingspin == nil) then
+		player.holdingspin = 0
+	end
+	if (player.holdingc1 == nil) then
+		player.holdingc1 = 0
+	end
+	if (player.hammertime == nil) then
+		player.hammertime = 0
+	end
+	if (player.nottakisboost == nil) then
+		player.nottakisboost = 0
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if player.playerstate == PST_DEAD
+		or player.notsoapnottakiskartcompatidk
+		or (player.pflags & PF_SLIDING)
+		or (player.exiting)
+		or (player.pflags & PF_STASIS)
+		or (player.pflags & PF_FULLSTASIS) then
+			player.hammertime = 0
+			player.holdingc1 = 0
+			player.nottakisboost = 0
+			player.holdingspin = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if not player.notsoapnottakiskartcompatidk then
+			if player.nottakisboost == 1 and P_IsObjectOnGround(player.mo)
+			and not (player.pflags & PF_SPINNING)
+			and not (player.pflags & PF_SLIDING) 
+			and not (player.exiting)
+			and (not player.powers[pw_nocontrol] or not (player.pflags & PF_FULLSTASIS))
+			and not (player.skidtime > 0) then
+				player.mo.state = S_PLAY_RUN
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if player.nottakisboost == 1 then
+			player.powers[pw_strong] = STR_DASH|STR_ANIM|STR_PUNCH|STR_WALL
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player) //why do we need a bunch of stasis stuff? because the game still lets me use not takis abilities in hide and seek
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if not player.notsoapnottakiskartcompatidk then
+			if (player.cmd.buttons & BT_CUSTOM1)
+			and player.holdingc1 == 0
+			and P_IsObjectOnGround(player.mo)
+			and not (player.pflags & PF_SPINNING)
+			and player.gotflag == 0
+			and player.playerstate ~= PST_DEAD
+			and not (player.pflags & PF_SLIDING) 
+			and not (player.exiting)
+			and not (player.powers[pw_carry])
+			and not (player.powers[pw_carry] == CR_NIGHTSMODE) then
+				if (player.pflags & PF_STASIS) then return end
+				if (player.pflags & PF_FULLSTASIS) then return end
+				if player.powers[pw_nocontrol] == 0 then
+					player.mo.state = S_PLAY_RUN
+					P_Thrust(player.mo, player.mo.angle, 20*FRACUNIT)
+					player.holdingc1 = 1
+					player.nottakisboost = 1
+					player.powers[pw_strong] = STR_DASH|STR_ANIM|STR_PUNCH|STR_WALL
+					player.speed = 20*FRACUNIT
+				end
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if player.nottakisboost == 1 and (player.mo.valid) then
+		if not S_SoundPlaying(player.mo, sfx_ntspd)
+			S_StartSound(player.mo, sfx_ntspd)
+		end
+	else
+		S_StopSoundByID(player.mo, sfx_ntspd)
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if not (player.cmd.buttons & BT_CUSTOM1) and player.holdingc1 == 1 then
+			player.holdingc1 = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if not (player.cmd.buttons & BT_SPIN) and player.holdingspin == 1 then
+			player.holdingspin = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if not player.notsoapnottakiskartcompatidk or not (player.powers[pw_carry]) then
+			if player.holdingspin == 0 then
+				if (player.cmd.buttons & BT_SPIN) and (player.pflags & PF_JUMPED)
+				and player.hammertime == 0 and not (player.mo.eflags & MFE_GOOWATER)
+				and not (player.powers[pw_carry] == CR_NIGHTSMODE) 
+				and player.gotflag == 0
+				and not (player.pflags & PF_THOKKED) then
+					S_StartSound(player.mo, sfx_nsilly)
+					player.holdingspin = 1
+					player.hammertime = 1
+					player.pflags = $|PF_THOKKED
+					P_SetObjectMomZ(player.mo, 10 * FRACUNIT, false)
+				end
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if not player.notsoapnottakiskartcompatidk then
+			if player.hammertime == 1 then
+				P_SetObjectMomZ(player.mo, -2*FRACUNIT, true)
+				player.mo.state = S_NOTTAKIS_HAMMER
+				player.powers[pw_strong] = STR_ANIM|STR_STOMP|STR_WALL|STR_FLOOR|STR_SPRING
+				player.pflags = $ & ~PF_SPINNING
+			end
+			
+			if player.hammertime == 1 and (player.mo.eflags & MFE_SPRUNG) then
+				player.hammertime = 0
+				player.mo.state = S_NOTTAKIS_BOUNCE
+			end
+
+			if player.hammertime == 1 and (player.mo.eflags & MFE_GOOWATER) then
+				player.hammertime = 0
+			end
+		
+			if player.hammertime == 1 and P_IsObjectOnGround(player.mo) then
+				S_StartSound(player.mo, P_RandomRange(sfx_ntimp1, sfx_ntimp2))
+				player.hammertime = 0
+				player.pflags = $ & ~PF_THOKKED
+				if (player.cmd.buttons & BT_JUMP) and not (player.mo.eflags & MFE_SPRUNG) then
+					if not (player.powers[pw_shield] == SH_BUBBLEWRAP) then
+						if (player.powers[pw_shield] == SH_ARMAGEDDON) then
+							P_SetObjectMomZ(player.mo, 20*FRACUNIT, false)
+						else
+							P_SetObjectMomZ(player.mo, 15*FRACUNIT, false)
+						end
+						player.pflags = $1|PF_JUMPED
+						player.mo.state = S_NOTTAKIS_BOUNCE
+						S_StartSound(player.mo, sfx_kc52)
+					end
+				end
+				if (player.cmd.buttons & BT_SPIN) and not (player.cmd.buttons & BT_JUMP) and not (player.mo.eflags & MFE_SPRUNG) then
+					if not (player.powers[pw_shield] == SH_BUBBLEWRAP) then
+						P_Thrust(player.mo, player.mo.angle, 10*FRACUNIT)
+						player.pflags = $1|PF_SPINNING
+						player.mo.state = S_PLAY_ROLL
+					end
+				end
+				if (player.powers[pw_shield] == SH_ARMAGEDDON) then
+					player.powers[pw_shield] = 0
+					P_SpawnMobjFromMobj(player.mo,0,0,0,MT_NOTSOAPEXPLOSION)
+					S_StartSound(player.mo, sfx_boomr)
+					P_NukeEnemies(player.mo, player.mo, 1536*FRACUNIT)
+					P_FlashPal(player, PAL_NUKE, 10)
+				elseif (player.powers[pw_shield] == SH_ELEMENTAL) then
+					P_ElementalFire(player, true)
+				elseif (player.powers[pw_shield] == SH_BUBBLEWRAP) then
+					P_DoBubbleBounce(player)
+				end
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "nottakis" then
+		if player.nottakisboost == 1 and (player.pflags & PF_SPINNING)
+			player.mo.state = S_PLAY_ROLL
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if player.nottakisboost == 1 and (player.mo.valid) then
+		if player.skidtime > 0
+		or player.playerstate == PST_DEAD
+		//or player.powers[pw_pushing]
+		or player.speed < 5*FRACUNIT
+		or (player.pflags & PF_SLIDING) 
+		or (player.exiting)
+		or (player.pflags & PF_STASIS)
+		or (player.pflags & PF_FULLSTASIS)
+		or not (player.gotflag == 0)
+		or player.notsoapnottakiskartcompatidk
+		or (player.powers[pw_carry] == CR_NIGHTSMODE)
+		or (player.powers[pw_carry])
+			player.nottakisboost = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if player.hammertime == 1 and (player.mo.valid) then
+		if (player.pflags & PF_STASIS)
+		or (player.pflags & PF_FULLSTASIS)
+		or not (player.gotflag == 0)
+		or player.notsoapnottakiskartcompatidk
+		or (player.powers[pw_carry] == CR_NIGHTSMODE)
+		or (player.powers[pw_carry])
+			player.hammertime = 0
+		end
+	end
+end)

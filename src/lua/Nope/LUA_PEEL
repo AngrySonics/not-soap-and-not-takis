@@ -1,0 +1,91 @@
+freeslot("SPR_PEEL","sfx_nspd","SPR2_FDSH","S_PLAY_NOTSOAP_MACH4","SPR2_UPCN","S_PLAY_NOTSOAP_UPPERCUTCANCEL")
+states[S_PLAY_NOTSOAP_MACH4] = {
+  sprite = SPR_PLAY,
+  frame = SPR2_FDSH,
+  nextstate = S_PLAY_NOTSOAP_MACH4
+}
+
+states[S_PLAY_NOTSOAP_UPPERCUTCANCEL] = {
+  sprite = SPR_PLAY,
+  frame = SPR2_UPCN,
+  nextstate = S_PLAY_NOTSOAP_UPPERCUTCANCEL
+}
+
+addHook("ThinkFrame", do
+	for player in players.iterate
+		if (player and player.mo and player.mo.valid) and (player.mo.skin == "notsoap")
+			if player.dashmode >= 3*TICRATE
+				player.nomoredashmodeflash = P_SpawnMobjFromMobj(player.mo,0,0,0,MT_OVERLAY)
+				player.nomoredashmodeflash.target = player.mo
+				player.nomoredashmodeflash.skin = player.mo.skin
+				player.nomoredashmodeflash.sprite = player.mo.sprite
+				player.nomoredashmodeflash.spritexscale = player.mo.spritexscale
+				player.nomoredashmodeflash.spriteyscale = player.mo.spriteyscale
+				player.nomoredashmodeflash.sprite2 = player.mo.sprite2
+				player.nomoredashmodeflash.color = player.mo.color
+				player.nomoredashmodeflash.angle = player.drawangle
+				player.nomoredashmodeflash.info.dispoffset = 1
+				player.nomoredashmodeflash.frame = player.mo.frame
+				player.nomoredashmodeflash.fuse = 1
+				player.nomoredashmodeflash.rollangle = player.mo.rollangle
+				player.nomoredashmodeflash.roll = player.mo.roll
+				player.nomoredashmodeflash.pitch = player.mo.pitch
+			end
+			if player.mo.state == S_PLAY_DASH
+			or player.mo.state == S_PLAY_NOTSOAP_MACH4
+			and not player.powers[pw_super]
+				for i = -40, 40
+					
+					local force = i*FRACUNIT/3
+					local angle = ANGLE_90
+
+					local shiftx = FixedMul(cos(player.drawangle + angle), force)
+					local shifty = FixedMul(sin(player.drawangle + angle), force)
+					
+					local shiftx2 = FixedMul(cos(player.drawangle), FRACUNIT)
+					local shifty2 = FixedMul(sin(player.drawangle), FRACUNIT)
+					
+					if i > 20
+					or i < -20
+						local peelout = P_SpawnMobjFromMobj(player.mo, shiftx2 + shiftx, shifty2 + shifty, 0, MT_OVERLAY)
+						peelout.target = player.mo
+						peelout.fuse = 1
+						peelout.sprite = SPR_PEEL
+						if i < 0
+							if player.mo.frame == A
+								peelout.frame = A
+							elseif player.mo.frame == B
+								peelout.frame = B
+							elseif player.mo.frame == C
+								peelout.frame = C
+							elseif player.mo.frame == D
+								peelout.frame = D
+							end
+							peelout.angle = player.drawangle + ANGLE_90/6
+						else
+							if player.mo.frame == A
+								peelout.frame = C
+							elseif player.mo.frame == B
+								peelout.frame = D
+							elseif player.mo.frame == C
+								peelout.frame = A
+							elseif player.mo.frame == D
+								peelout.frame = B
+							end
+							peelout.angle = player.drawangle - ANGLE_90/6
+						end
+						peelout.renderflags = RF_PAPERSPRITE
+						peelout.scale = player.mo.scale/2
+						peelout.rollangle = player.mo.rollangle
+						peelout.roll = player.mo.roll
+						peelout.pitch = player.mo.pitch
+						if player.mo.eflags & MFE_VERTICALFLIP
+							peelout.eflags = $ | MFE_VERTICALFLIP
+							peelout.z = player.mo.z + player.mo.height - peelout.height
+						end
+					end
+				end
+			end
+		end
+	end
+end)

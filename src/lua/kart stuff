@@ -1,0 +1,76 @@
+addHook('PlayerSpawn', function(p)
+	if (p.inkart == nil) then
+		p.inkart = 0
+	end
+end)
+
+addHook('PlayerSpawn', function(player)
+	if (player.notsoapnottakiskartcompatidk == nil) then
+		player.notsoapnottakiskartcompatidk = 0
+	end
+end)
+
+addHook("PlayerThink", function(player, p)
+	if (player and player.mo and player.mo.valid) then
+		if player.mo.skin == "notsoap" or player.mo.skin == "nottakis" then
+			if player.inkart then
+				player.notsoapnottakiskartcompatidk = 1
+			else
+				player.notsoapnottakiskartcompatidk = 0
+			end
+		end
+	end
+end)
+
+freeslot("sfx_shkow1","sfx_ntkow1","sfx_ntkow2","sfx_ntkow3","sfx_ntkow4","sfx_ntkow5","sfx_ntkow6","sfx_ntkow7")
+
+//i stole this from takis
+
+if not TakisKart_Karters
+	rawset(_G,"TakisKart_Karters",{})
+end
+if not TakisKart_KarterData
+	rawset(_G,"TakisKart_KarterData",{})
+end
+
+TakisKart_Karters["notsoap"] = true
+TakisKart_KarterData["notsoap"] = {
+	basenormalspeed = 43,
+	
+	--speed,weight
+	stats = {8,2},
+	
+	radius = 24*FU,
+	
+	painsounds = {sfx_ohhoh},
+	
+	nolookback = false,
+}
+
+TakisKart_Karters["nottakis"] = true
+TakisKart_KarterData["nottakis"] = {
+	basenormalspeed = 43,
+	
+	--speed,weight
+	stats = {8,2},
+	
+	radius = 24*FU,
+	
+	painsounds = {sfx_ntkow1,sfx_ntkow2,sfx_ntkow3,sfx_ntkow4,sfx_ntkow5,sfx_ntkow6,sfx_ntkow7},
+	
+	nolookback = false,
+}
+
+TakisKart_Karters["shampoo"] = true
+TakisKart_KarterData["shampoo"] = {
+	basenormalspeed = 43,
+	
+	--speed,weight
+	stats = {8,2},
+	
+	radius = 24*FU,
+	
+	painsounds = {sfx_shkow1}, //i ate the other one
+	
+	nolookback = false,
+}

@@ -1,0 +1,84 @@
+Character
+SkinName = notsoap&nottakis
+PicName = poopy
+DisplayName = Soap#& Takis
+TagTextColor = SKINCOLOR_GREEN
+TagOutlineColor = SKINCOLOR_FOREST
+OppositeColor = SKINCOLOR_RED
+PlayerText = algebros
+#
+
+Character
+SkinName = nottakis&notsoap
+PicName = nottakis
+DisplayName = Takis#& Soap
+TagTextColor = SKINCOLOR_GREEN
+TagOutlineColor = SKINCOLOR_FOREST
+OppositeColor = SKINCOLOR_RED
+PlayerText = algebros
+#
+
+Character
+SkinName = soapthehedge&notsoap
+PicName = ASSBLAST
+DisplayName = Soap#& Soap
+PlayerText = algebros
+#
+
+Character
+SkinName = takisthefox&nottakis
+PicName = ALGEBROS
+DisplayName = Takis#& Takis
+PlayerText = algebros
+#
+
+Character
+SkinName = skatenic&notsoap
+PicName = SKATENIC
+DisplayName = Skatenic#& Soap
+PlayerText = algebros
+#
+
+Character
+SkinName = skatenic&nottakis
+PicName = SKATENIC
+DisplayName = Skatenic#& Takis
+PlayerText = algebros
+#
+
+Character
+SkinName = noise&notsoap
+PicName = SKATENIC
+DisplayName = Skatenic#& Soap
+PlayerText = if you were expecting the noise pizza tower thats your problem
+#
+
+Character
+SkinName = noise&nottakis
+PicName = SKATENIC
+DisplayName = Skatenic#& Takis
+PlayerText = if you were expecting the noise pizza tower thats your problem
+#
+
+Character
+SkinName = notsoap
+DisplayName = Soap
+PlayerText = this is worse than the time i leaked soap the hedge for srb2
+#
+
+Character
+SkinName = nottakis
+DisplayName = Takis
+TagTextColor = SKINCOLOR_FOREST
+TagOutlineColor = SKINCOLOR_GREEN
+PlayerText = don't smile because you have takis, cry because it's not takis!
+#
+
+Character
+SkinName = shampoo
+DisplayName = Shampoo
+PlayerText = not soap if you put him in a dress and gave him a hammer
+
+
+he looks really, really good in a dress. hehehe.
+#

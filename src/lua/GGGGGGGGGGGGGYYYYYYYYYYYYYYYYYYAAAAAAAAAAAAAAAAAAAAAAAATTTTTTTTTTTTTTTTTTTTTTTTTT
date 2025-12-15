@@ -1,0 +1,70 @@
+freeslot("S_THUG_SHAKER","SPR2_GYAT")
+
+states[S_THUG_SHAKER] = {
+  sprite = SPR_PLAY,
+  frame = SPR2_GYAT,
+  tics = 4,
+  nextstate = S_THUG_SHAKER
+}
+
+addHook("PlayerThink", function(player) // Make sure that it runs
+	if (player and player.mo and player.mo.valid and player.mo.health) then
+		if player.thugshaking == 1 then
+			S_ChangeMusic("GYATT", true, player)
+		end
+	
+		if player.mo.state == S_THUG_SHAKER and player.speed ~= 0 and P_IsObjectOnGround(player.mo) then
+			player.mo.state = S_PLAY_STND
+			player.thugshaking = 0
+			P_RestoreMusic(player)
+		elseif player.thugshaking == 1 and not P_IsObjectOnGround(player.mo) then
+			player.thugshaking = 0
+			P_RestoreMusic(player)
+		elseif player.thugshaking == 1 and (player.pflags & PF_SPINNING) then
+			player.thugshaking = 0
+			P_RestoreMusic(player)
+		end
+	end
+end)
+
+COM_AddCommand("thugshaker", function(player)
+	if (player and player.mo and player.mo.valid and player.mo.health)
+		if P_IsValidSprite2(player.mo, SPR2_GYAT) and player.speed == 0 and P_IsObjectOnGround(player.mo)
+			player.mo.state = S_THUG_SHAKER
+			player.thugshaking = 1
+			S_ChangeMusic("GYATT", true, player)
+			player.powers[pw_strong] = STR_ANIM|STR_PUNCH|STR_STOMP|STR_WALL|STR_SPIKE|STR_SPRING|STR_CEILING|STR_FLOOR|STR_HEAVY|STR_GUARD|STR_UPPER|STR_STOMP|STR_TAIL
+		else
+			print("YOU CAN'T MAKE THAT BOOTY POP RIGHT NOW!")
+		end
+	else
+		print("ur not valid")
+    end
+end)
+
+addHook("BotTiccmd", function(bot,cmd)
+	local player = players[0]
+	
+	if paused then
+		return
+	end
+
+	if (bot and bot.mo and bot.mo.valid and bot.mo.health) then
+		if player.thugshaking then
+			if P_IsValidSprite2(bot.mo, SPR2_GYAT) and bot.speed == 0 and not (bot.mo.state == S_THUG_SHAKER) and P_IsObjectOnGround(bot.mo) then
+				bot.mo.state = S_THUG_SHAKER
+				bot.thugshaking = 1
+				bot.powers[pw_strong] = STR_ANIM|STR_PUNCH|STR_STOMP|STR_WALL|STR_SPIKE|STR_SPRING|STR_CEILING|STR_FLOOR|STR_HEAVY|STR_GUARD|STR_UPPER|STR_STOMP|STR_TAIL
+			end
+		end
+	end
+		
+	if (bot and bot.mo and bot.mo.valid and bot.mo.health) and bot.mo.state == S_THUG_SHAKER and bot.speed ~= 0 and P_IsObjectOnGround(player.mo) then
+		bot.mo.state = S_PLAY_STND
+		bot.thugshaking = 0
+	elseif player.thugshaking == 1 and not P_IsObjectOnGround(player.mo) then
+		bot.thugshaking = 0
+	elseif bot.thugshaking == 1 and (bot.pflags & PF_SPINNING) then
+		bot.thugshaking = 0
+	end
+end)

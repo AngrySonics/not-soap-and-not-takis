@@ -1,0 +1,188 @@
+freeslot("sfx_nsup")
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.playerstate == PST_DEAD or player.notsoapnottakiskartcompatidk then
+			player.mach4 = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if not player.notsoapnottakiskartcompatidk then
+			if player.dashmode >= 3*TICRATE and player.speed >= 45*FRACUNIT
+				player.mach4 = 1
+				player.powers[pw_strong] = STR_DASH|STR_ANIM|STR_PUNCH|STR_STOMP|STR_WALL|STR_SPIKE
+			else
+				player.mach4 = 0
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.mach4 == 1 and P_IsObjectOnGround(player.mo) and not (player.pflags & PF_SPINNING) and player.playerstate ~= PST_DEAD
+			player.mo.state = S_PLAY_NOTSOAP_MACH4
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.mach4 == 1 and player.mo.state == S_PLAY_DASH and not (player.pflags & PF_SPINNING) and player.playerstate ~= PST_DEAD
+			player.mo.state = S_PLAY_NOTSOAP_MACH4
+		end
+	end
+end)
+
+//workaround for weird buggy buggy buggy buggy bugyg buggy buggy buggy bugyg ubygu bugyg ubgyg buggy buggy buggy
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.mach4 == 1 and (player.pflags & PF_SPINNING) and player.playerstate ~= PST_DEAD
+			player.mo.state = S_PLAY_ROLL
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mach4 == 0 and player.mo.state == S_PLAY_NOTSOAP_MACH4 and not (player.pflags & PF_SPINNING) and player.playerstate ~= PST_DEAD
+		player.mo.state = S_PLAY_DASH
+	end
+end)
+
+addHook("PlayerThink", function(player)
+    if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap"
+		if not player.notsoapnottakiskartcompatidk then
+			if (player.powers[pw_justsprung] or player.mo.eflags & MFE_SPRUNG) and player.mo.state != S_PLAY_SPRING then 
+				player.dashmode = DASHMODE_MAX
+			end
+		end
+    end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mach4 == 1 then
+		if not S_SoundPlaying(player.mo, sfx_nspd)
+			S_StartSound(player.mo, sfx_nspd)
+		end
+	else
+		S_StopSoundByID(player.mo, sfx_nspd)
+	end
+end)
+
+addHook("ThinkFrame", do
+	for player in players.iterate
+	    if player.holdingc1 == nil or player.playerstate == PST_DEAD or (player.pflags & PF_SPINNING)
+			player.holdingc1 = 0
+		end
+	end
+end)
+
+addHook("ThinkFrame", do
+	for player in players.iterate
+	    if player.uppercutted == nil or player.playerstate == PST_DEAD or (player.pflags & PF_SPINNING) then
+			player.uppercutted = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.notsoapnottakiskartcompatidk then
+			player.uppercutted = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if not player.notsoapnottakiskartcompatidk then
+			if (player.cmd.buttons & BT_CUSTOM1)
+			and player.holdingc1 == 0
+			and player.uppercutted == 0
+			and player.uppercutcancel == 0
+			and player.gotflag == 0
+			and not (player.pflags & PF_SPINNING)
+			and player.playerstate ~= PST_DEAD
+			and not (player.pflags & PF_SLIDING) 
+			and not (player.exiting) 
+			and not (player.powers[pw_carry] == CR_NIGHTSMODE)
+			and not (player.powers[pw_carry]) then
+				if (player.pflags & PF_STASIS) then return end
+				if (player.pflags & PF_FULLSTASIS) then return end
+				if player.powers[pw_nocontrol] == 0 then
+					player.mo.state = S_NOTSOAP_UPPERCUT
+					P_SetObjectMomZ(player.mo, 15*FRACUNIT, false)
+					player.powers[pw_strong] = STR_ANIM|STR_CEILING|STR_STOMP
+					player.pflags = $|PF_JUMPED|PF_THOKKED & ~PF_STARTJUMP
+					S_StartSound(player.mo, sfx_nsup)
+					player.holdingc1 = 1
+					player.uppercutted = 1
+				end
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.mo.state == S_NOTSOAP_UPPERCUT and not P_IsObjectOnGround(player.mo) and not (player.pflags & PF_SPINNING) and player.playerstate ~= PST_DEAD
+			player.drawangle = leveltime*ANG1*16
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.mo.state == S_NOTSOAP_UPPERCUT then
+			player.uppercutted = 1
+			player.pflags = $|PF_JUMPED|PF_THOKKED
+		else
+			player.uppercutted = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if player.mo.state == S_PLAY_NOTSOAP_UPPERCUTCANCEL then
+			player.uppercutcancel = 1
+			player.pflags = $|PF_JUMPED|PF_THOKKED
+		else
+			player.uppercutcancel = 0
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if not player.notsoapnottakiskartcompatidk then
+			if player.mo.state == S_NOTSOAP_UPPERCUT and (player.cmd.buttons & BT_SPIN)
+				player.mo.state = S_PLAY_NOTSOAP_UPPERCUTCANCEL
+				if (player.powers[pw_shield] == SH_ARMAGEDDON) then
+					player.powers[pw_shield] = 0
+					P_SpawnMobj(player.mo.x, player.mo.y, player.mo.z, MT_NOTSOAPEXPLOSION)
+					S_StartSound(player.mo, sfx_boomr)
+					P_NukeEnemies(player.mo, player.mo, 1536*FRACUNIT)
+					P_FlashPal(player, PAL_NUKE, 10)
+					P_InstaThrust(player.mo, player.mo.angle, 70*FRACUNIT)
+				else
+					P_InstaThrust(player.mo, player.mo.angle, 50*FRACUNIT)
+				end
+				player.pflags = $|PF_THOKKED
+				player.dashmode = DASHMODE_MAX
+				P_SetObjectMomZ(player.mo, 3*FRACUNIT, false)
+			end
+		end
+	end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "notsoap" then
+		if not (player.cmd.buttons & BT_CUSTOM1) and player.holdingc1 == 1
+			player.holdingc1 = 0
+		end
+	end
+end)

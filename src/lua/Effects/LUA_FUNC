@@ -1,0 +1,62 @@
+//taken from my other addon, Soap the Hedge
+
+//nothing fancy here, just regular ghosts
+//scrap that, lets add some pizza tower styled afterimages!!
+//lets make this follow the soap, so we can actually see the thing
+rawset(_G, "NSATAfterImages", function(p, me, color)
+//	local ghost = P_SpawnGhostMobj(me)
+//	ghost.frame = TR_TRANS80
+//	ghost.destscale = $*99
+	if p.notsoapaiframewait
+		return
+	end
+	local chasecam = CV_FindVar("chasecam")
+	local afteri = P_SpawnGhostMobj(me)
+	
+	if not (NSATAICandidates[me.skin][3])
+		if p.notsoapaistyle == 1 or p.notsoapaistyle == nil or (not(NSATAICandidates[me.skin][2]))
+			if color == 1
+				afteri.color = SKINCOLOR_AIREALLYRED
+			elseif color == 2
+				afteri.color = SKINCOLOR_AIREALLYGREEN
+			end
+		elseif p.notsoapaistyle == 2
+			if color == 1
+				afteri.color = SKINCOLOR_AIREALLYBLUE
+			elseif color == 2
+				afteri.color = SKINCOLOR_AIREALLYPINK
+			end
+		elseif p.notsoapaistyle == 3 //customcolor
+		and NSATAICandidates[me.skin][2]
+			if color == 1
+				afteri.color = p.notsoapaicolor1
+			elseif color == 2
+				afteri.color = p.notsoapaicolor2
+			end		
+		end
+	else
+			if color == 1
+				afteri.color = NSATAICandidates[me.skin][4]
+			elseif color == 2
+				afteri.color = NSATAICandidates[me.skin][5]
+			end		
+	
+	end
+	afteri.colorized = true
+	afteri.frame = FF_FULLBRIGHT|me.frame|TR_TRANS10
+	afteri.fuse = 14
+	
+	//should you be out of my face?
+	if chasecam.value
+		afteri.flags2 = $ & ~MF2_DONTDRAW
+	else
+		afteri.flags2 = $ | MF2_DONTDRAW
+	end
+
+	//delete the ai if we cant emit them
+	//not even sure if this works
+	if not p.notsoapaicanai
+		afteri.fuse = 0
+		P_KillMobj(afteri)
+	end
+end)

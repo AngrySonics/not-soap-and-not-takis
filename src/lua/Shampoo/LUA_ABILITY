@@ -1,0 +1,78 @@
+freeslot("sfx_ntjump","S_PLAY_SHAMPOO_BONK")
+states[S_PLAY_SHAMPOO_BONK] = {
+  sprite = SPR_PLAY,
+  frame = SPR2_MLEE|FF_ANIMATE,
+  tics = 8,
+  var1 = 0,
+  var2 = 2,
+  nextstate = S_PLAY_DASH
+}
+addHook('PlayerSpawn', function(player)
+	player.shampoohammer = 0
+end)
+
+addHook("PlayerThink", function(player)
+    if (player and player.mo and player.mo.valid) and player.mo.skin == "shampoo" then
+		if not player.notsoapnottakiskartcompatidk then
+			if (player.powers[pw_justsprung] or player.mo.eflags & MFE_SPRUNG) and player.mo.state != S_PLAY_SPRING then 
+				player.dashmode = DASHMODE_MAX
+			end
+		end
+    end
+end)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "shampoo" then
+		if not player.notsoapnottakiskartcompatidk then
+			if player.dashmode >= 3*TICRATE
+				player.powers[pw_strong] = STR_DASH|STR_ANIM|STR_PUNCH|STR_STOMP|STR_WALL|STR_SPIKE
+			end
+		end
+	end
+end)
+
+addHook("AbilitySpecial", function(player)
+	if player.mo.skin != "shampoo"
+		return 
+	end
+	if player.pflags&PF_THOKKED
+		return true
+	end
+	player.mo.state = S_PLAY_TWINSPIN
+	P_SetObjectMomZ(player.mo, 7*FRACUNIT, false)
+	S_StartSound(player.mo, sfx_nsilly)
+	player.pflags = $|PF_JUMPED|PF_THOKKED & ~PF_SPINNING
+	player.shampoohammer = 1
+	return true
+end)
+
+addHook("MobjMoveBlocked", function(mo) -- Checks if player is hitting a wall
+local player = mo.player
+	if (player.mo.valid) and player.shampoohammer == 1 and player.mo.skin == "shampoo" and (player.cmd.buttons & BT_JUMP) then
+		player.mo.state = S_PLAY_TWINSPIN
+		P_SetObjectMomZ(player.mo, 10*FRACUNIT, false)
+		S_StartSound(player.mo, sfx_ntjump)
+		P_InstaThrust(player.mo, player.mo.angle, -15*FRACUNIT)
+		player.mo.angle = $ -ANGLE_180
+		player.pflags = $|PF_JUMPED|PF_THOKKED
+	end
+end, MT_PLAYER)
+
+addHook("PlayerThink", function(player)
+	if (player and player.mo and player.mo.valid) and player.mo.skin == "shampoo" then
+		if player.playerstate == PST_DEAD or P_IsObjectOnGround(player.mo) or player.notsoapnottakiskartcompatidk or (player.powers[pw_carry] == CR_NIGHTSMODE) then
+			player.shampoohammer = 0
+		end
+	end
+end)
+
+
+local skin = "shampoo"
+addHook("MobjThinker", function(mobj, player)
+    for player in players.iterate do
+        if player.mo.skin == "notsoap" and player.valid
+			mobj.skin = skin
+			mobj.color = skins[skin].prefcolor
+		end
+	end
+end, MT_ROSY)

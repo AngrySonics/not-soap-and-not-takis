@@ -1,0 +1,21 @@
+addHook("ThinkFrame", do
+	for player in players.iterate
+		if (player and player.mo and player.mo.valid) and (player.mo.skin == "shampoo")
+			if player.dashmode >= 3*TICRATE
+				player.nomoredashmodeflash = P_SpawnMobjFromMobj(player.mo,0,0,0,MT_OVERLAY)
+				player.nomoredashmodeflash.target = player.mo
+				player.nomoredashmodeflash.skin = player.mo.skin
+				player.nomoredashmodeflash.sprite = player.mo.sprite
+				player.nomoredashmodeflash.spritexscale = player.mo.spritexscale
+				player.nomoredashmodeflash.spriteyscale = player.mo.spriteyscale
+				player.nomoredashmodeflash.sprite2 = player.mo.sprite2
+				player.nomoredashmodeflash.color = player.mo.color
+				player.nomoredashmodeflash.angle = player.drawangle
+				player.nomoredashmodeflash.info.dispoffset = 1
+				player.nomoredashmodeflash.frame = player.mo.frame
+				player.nomoredashmodeflash.fuse = 1
+				player.nomoredashmodeflash.rollangle = player.mo.rollangle
+			end
+		end
+	end
+end)
