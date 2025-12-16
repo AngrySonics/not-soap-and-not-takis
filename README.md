@@ -1,5 +1,9 @@
 # Not Soap and Not Takis
-tuff bootleg version of soap and takis by luigi budd
+(((i dont have a proper thumbnail yet heres the trash bin central one)))
+
+<img width="960" height="600" alt="THE AMIGOS!!!!!!!!!!!!!!!" src="https://github.com/user-attachments/assets/7acc21bd-e025-4da8-8108-87b2fcf2a5d0" />
+
+tuff bootleg version of soap and takis by luigi budd (HE KNOWS ABOUT THIS HE HAS HOSTED WITH IT SEVERAL TIMES)
 
 go build it yourself because i dont have a server to dump gitbuilds to unlike luigi budds soap yar thing
 
